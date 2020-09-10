@@ -1,16 +1,36 @@
 import SimpleITK as sitk
+import numpy as np
 
-## Changing metric
+## Non-rigid transform
 
-# fixed_image = sitk.ReadImage('data/FirstExperiment/subject1/Normal001-MRA.mha', sitk.sitkFloat32)
-moving_image = sitk.ReadImage('data/FirstExperiment/subject1/Normal001-DTI.mha', sitk.sitkFloat32)
 
-fixed_image = sitk.ReadImage('data/FirstExperiment/subject1/Normal001-T1-Flash.mha', sitk.sitkFloat32)
-# moving_image = sitk.ReadImage('data/FirstExperiment/subject1/Normal001-T2.mha', sitk.sitkFloat32)
+rotation_center = (100, 100, 100)
+axis = (0,0,1)
+angle = np.pi/2.0
+translation = (1,2,3)
+scale_factor = 2.0
+similarity = sitk.Similarity3DTransform(scale_factor, axis, angle, translation, rotation_center)
+
+
+## Affine
+affine = sitk.AffineTransform(3)
+affine.SetMatrix(similarity.GetMatrix())
+affine.SetTranslation(similarity.GetTranslation())
+affine.SetCenter(similarity.GetCenter())
+
+## Scale
+scale = sitk.ScaleTransform(3, (0.5,2,0))
+
+
+# fixed_image = sitk.ReadImage('data/FirstExperiment/subject3/Normal003-MRA.mha', sitk.sitkFloat32)
+fixed_image = sitk.ReadImage('data/FirstExperiment/subject3/Normal003-DTI.mha', sitk.sitkFloat32)
+
+# moving_image = sitk.ReadImage('data/FirstExperiment/subject3/Normal003-T1-Flash.mha', sitk.sitkFloat32)
+moving_image = sitk.ReadImage('data/FirstExperiment/subject3/Normal003-T2.mha', sitk.sitkFloat32)
 
 initial_transform = sitk.CenteredTransformInitializer(fixed_image, 
                                                       moving_image, 
-                                                      sitk.Euler3DTransform(), 
+                                                      affine,
                                                       sitk.CenteredTransformInitializerFilter.GEOMETRY)
 
 moving_resampled = sitk.Resample(moving_image, fixed_image, initial_transform, sitk.sitkLinear, 0.0, moving_image.GetPixelID())
@@ -20,9 +40,7 @@ moving_resampled = sitk.Resample(moving_image, fixed_image, initial_transform, s
 registration_method = sitk.ImageRegistrationMethod()
 
 # Similarity metric settings.
-# registration_method.SetMetricAsMeanSquares()
 registration_method.SetMetricAsCorrelation()
-# registration_method.SetMetricAsMattesMutualInformation(numberOfHistogramBins=50)
 registration_method.SetMetricSamplingStrategy(registration_method.RANDOM)
 registration_method.SetMetricSamplingPercentage(0.1)
 
@@ -48,4 +66,4 @@ print('Final metric value: {0}'.format(registration_method.GetMetricValue()))
 print('Optimizer\'s stopping condition, {0}'.format(registration_method.GetOptimizerStopConditionDescription()))
 
 moving_resampled = sitk.Resample(moving_image, fixed_image, final_transform, sitk.sitkLinear, 0.0, moving_image.GetPixelID())
-sitk.WriteImage(moving_resampled, 'Output/subject1/resultImage3-001.mha')
+sitk.WriteImage(moving_resampled, 'Output/subject3/resultImage1-003.mha')
