@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="styles/style.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Image Registration</title>
+</head>
+<body>
+    <div class="content">
+        <h1>Image Registration</h1>
+        <form method ="POST" action="/" enctype="multipart/form-data">
+            <label for="dti">DTI image</label>
+            <input type="file" name="dtiFile" id="dti"><br>
+
+            <label for="t2">T2 image</label>
+            <input type="file" name="t2File" id="t2"><br>
+
+            <input type="submit" value ="Upload">
+        </form>        
+    </div>
+
+</body>
+</html>
