@@ -1,8 +1,10 @@
 import SimpleITK as sitk
 import numpy as np
+import time
 
 ## Deformable registration
 def run_registration(dtiFilename, t2Filename):
+    start_time = time.time()
     # fixed_image = sitk.ReadImage('data/FirstExperiment/subject3/Normal003-MRA.mha', sitk.sitkFloat32)
     fixed_image = sitk.ReadImage(dtiFilename, sitk.sitkFloat32)
     
@@ -10,7 +12,7 @@ def run_registration(dtiFilename, t2Filename):
     moving_image = sitk.ReadImage(t2Filename, sitk.sitkFloat32)
     
     # Determine the number of BSpline control points using the physical spacing we want for the control grid. 
-    grid_physical_spacing = [50.0, 50.0, 50.0] # A control point every 50mm
+    grid_physical_spacing = [40.0, 40.0, 40.0] # A control point every 40mm
     image_physical_size = [size*spacing for size,spacing in zip(fixed_image.GetSize(), fixed_image.GetSpacing())]
     mesh_size = [int(image_size/grid_spacing + 0.5) \
                     for image_size,grid_spacing in zip(image_physical_size,grid_physical_spacing)]
@@ -26,7 +28,7 @@ def run_registration(dtiFilename, t2Filename):
     
     # Similarity metric settings.
     # registration_method.SetMetricAsCorrelation()
-    registration_method.SetMetricAsMattesMutualInformation(numberOfHistogramBins=50)
+    registration_method.SetMetricAsMattesMutualInformation(numberOfHistogramBins=60)
     registration_method.SetMetricSamplingStrategy(registration_method.RANDOM)
     registration_method.SetMetricSamplingPercentage(0.1)
     
@@ -52,4 +54,6 @@ def run_registration(dtiFilename, t2Filename):
     print('Optimizer\'s stopping condition, {0}'.format(registration_method.GetOptimizerStopConditionDescription()))
     
     moving_resampled = sitk.Resample(moving_image, fixed_image, final_transform, sitk.sitkLinear, 0.0, moving_image.GetPixelID())
-    sitk.WriteImage(moving_resampled, 'Output/REGISTRATION-IMAGE.mha')
+    sitk.WriteImage(moving_resampled, 'Output/REGISTRATION-IMAGE6-ALT.mha')
+    print(time.time() - start_time, "seconds")
+

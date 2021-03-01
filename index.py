@@ -8,7 +8,7 @@ Created on Thu Jan  7 15:08:25 2021
 
 import tornado.web
 import tornado.ioloop
-import imageRegistration
+import ImageRegistration2
 
 class uploadHandler(tornado.web.RequestHandler):
     def get(self):
@@ -31,8 +31,8 @@ class uploadHandler(tornado.web.RequestHandler):
             fh.close()
             t2Filename = f"img/{f.filename}"
         
-        self.write("<h1>'IMAGE CREATED'</h1>")
-        imageRegistration.run_registration(dtiFilename, t2Filename)
+        self.write("<h1>IMAGE CREATED</h1>")
+        ImageRegistration2.run_registration(dtiFilename, t2Filename)
 
 if (__name__  == "__main__"):
     app = tornado.web.Application([
