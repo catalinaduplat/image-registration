@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 
 import SimpleITK as sitk
-import os
 import time
 
 def run_registration(dtiFilename, t2Filename):
@@ -39,7 +38,9 @@ def run_registration(dtiFilename, t2Filename):
     print(f"Initial Number of Parameters: {tx.GetNumberOfParameters()}")
     
     R = sitk.ImageRegistrationMethod()
-    R.SetMetricAsJointHistogramMutualInformation()
+    R.SetMetricAsMattesMutualInformation(numberOfHistogramBins=32)
+    R.SetMetricSamplingStrategy(R.RANDOM)
+    R.SetMetricSamplingPercentage(0.1)
     
     R.SetOptimizerAsGradientDescentLineSearch(5.0,
                                               100,
@@ -67,7 +68,7 @@ def run_registration(dtiFilename, t2Filename):
     print(f" Iteration: {R.GetOptimizerIteration()}")
     print(f" Metric value: {R.GetMetricValue()}")
     
-    # sitk.WriteTransform(outTx, 'REGISTRATION-IMAGE3-ALT2.mha')
+    sitk.WriteTransform(outTx, 'Output/BSpline.txt')
     
     resampler = sitk.ResampleImageFilter()
     resampler.SetReferenceImage(fixed)
