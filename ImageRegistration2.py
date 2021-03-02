@@ -32,6 +32,7 @@ def run_registration(dtiFilename, t2Filename):
     moving = sitk.ReadImage(t2Filename, sitk.sitkFloat32)
     
     transformDomainMeshSize = [2] * fixed.GetDimension()
+    
     tx = sitk.BSplineTransformInitializer(fixed,
                                           transformDomainMeshSize)
     
