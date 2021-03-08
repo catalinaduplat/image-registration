@@ -12,8 +12,8 @@ import time
 import sys
 import re
 
-DTI_filename = ''
-T2_filename = ''
+FIXED_FILENAME = ''
+MOVING_FILENAME = ''
 OUTPUT_DIR = 'Output'
 
 if len ( sys.argv ) < 4:
@@ -23,12 +23,12 @@ if len ( sys.argv ) < 4:
 for subdir, dirs, files in os.walk(sys.argv[1]):
     for file in files:
         if re.search(sys.argv[2], file, re.IGNORECASE):
-            DTI_filename = os.path.join(subdir, file)
+            FIXED_FILENAME = os.path.join(subdir, file)
         if re.search(sys.argv[3], file, re.IGNORECASE):
-            T2_filename = os.path.join(subdir, file)
+            MOVING_FILENAME = os.path.join(subdir, file)
     subdir_basename = os.path.basename(os.path.normpath(subdir))
     
-    if DTI_filename and T2_filename:
+    if FIXED_FILENAME and MOVING_FILENAME:
         start_time = time.time()
         def command_iteration(method, bspline_transform):
             if method.GetOptimizerIteration() == 0:
@@ -52,9 +52,9 @@ for subdir, dirs, files in os.walk(sys.argv[1]):
             print("--------- Resolution Changing ---------")
         
         
-        fixed = sitk.ReadImage(DTI_filename, sitk.sitkFloat32)
+        fixed = sitk.ReadImage(FIXED_FILENAME, sitk.sitkFloat32)
         
-        moving = sitk.ReadImage(T2_filename, sitk.sitkFloat32)
+        moving = sitk.ReadImage(MOVING_FILENAME, sitk.sitkFloat32)
         
         transformDomainMeshSize = [2] * fixed.GetDimension()
         
