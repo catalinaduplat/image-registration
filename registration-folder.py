@@ -17,7 +17,7 @@ T2_filename = ''
 OUTPUT_DIR = 'Output'
 
 if len ( sys.argv ) < 4:
-    print( "usage: {0} <rootDir> <fixedImageType> <movingImageType>".format(sys.argv[0]))
+    print( "usage: {0} <rootDir> <fixedImageModality> <movingImageModality>".format(sys.argv[0]))
     sys.exit ( 1 )
 
 for subdir, dirs, files in os.walk(sys.argv[1]):
@@ -77,7 +77,7 @@ for subdir, dirs, files in os.walk(sys.argv[1]):
         
         R.SetInitialTransformAsBSpline(tx,
                                         inPlace=True,
-                                        scaleFactors=[1, 2, 8])
+                                        scaleFactors=[1, 2, 7])
         R.SetShrinkFactorsPerLevel([4, 2, 1])
         R.SetSmoothingSigmasPerLevel([4, 2, 1])
         
@@ -86,21 +86,7 @@ for subdir, dirs, files in os.walk(sys.argv[1]):
                       lambda: command_multi_iteration(R))
         
         outTx = R.Execute(fixed, moving)
-        
-        print("-------")
-        print(tx)
-        print(outTx)
-        print(f"Optimizer stop condition: {R.GetOptimizerStopConditionDescription()}")
-        print(f" Iteration: {R.GetOptimizerIteration()}")
-        print(f" Metric value: {R.GetMetricValue()}")
-        
-        f = open(os.path.join(OUTPUT_DIR, subdir_basename+'-results.txt'),"a+")
-        f.write(f"Optimizer stop condition: {R.GetOptimizerStopConditionDescription()}")
-        f.write(f"Iteration: {R.GetOptimizerIteration()}")
-        f.write(f"Metric value: {R.GetMetricValue()}")
-        
-        sitk.WriteTransform(tx, os.path.join(OUTPUT_DIR, subdir_basename+'-BSplineImportant.txt'))
-        sitk.WriteTransform(outTx, os.path.join(OUTPUT_DIR, subdir_basename+'-BSpline.txt'))
+        sitk.WriteTransform(outTx, os.path.join(OUTPUT_DIR, subdir_basename+'-BSplineTransform.txt'))
         
         resampler = sitk.ResampleImageFilter()
         resampler.SetReferenceImage(fixed)
@@ -116,9 +102,13 @@ for subdir, dirs, files in os.walk(sys.argv[1]):
         cimg = sitk.Compose(simg1, simg2, simg1 // 2. + simg2 // 2.)
         sitk.WriteImage(cimg, os.path.join(OUTPUT_DIR, subdir_basename+"-RESULT-IMAGE.mha"))
         
-        print(time.time() - start_time, "seconds")
-        
-        f.write(f"Time elapsed in seconds: {time.time() - start_time}")
+        with open(os.path.join(OUTPUT_DIR, subdir_basename+'-results.txt'),"a+") as f:
+            print("-------", file=f)
+            print(tx, file=f)
+            print(f"Optimizer stop condition: {R.GetOptimizerStopConditionDescription()}", file=f)
+            print(f"Iteration: {R.GetOptimizerIteration()}", file=f)
+            print(f"Metric value: {R.GetMetricValue()}", file=f)
+            print(f"Time elapsed in seconds: {time.time() - start_time}", file=f)
         
         original_checkerboard = sitk.CheckerBoard(rescaled_img1, rescaled_img2, [4,4,4])
         transformed_checkerboard = sitk.CheckerBoard(simg1, simg2, (10,10,4))
