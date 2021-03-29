@@ -41,7 +41,7 @@ if (__name__  == "__main__"):
         ("/img/(.*)", tornado.web.StaticFileHandler, {"path" : "img"})
     ])
     
-    app.listen(8088)
-    print("Listening on port 8088")
+    app.listen(3000)
+    print("Listening on port 3000")
     
     tornado.ioloop.IOLoop.instance().start()

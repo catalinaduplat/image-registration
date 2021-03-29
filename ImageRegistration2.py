@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 
+import os
 import SimpleITK as sitk
 import time
 
@@ -52,7 +53,7 @@ def run_registration(dtiFilename, t2Filename):
     
     R.SetInitialTransformAsBSpline(tx,
                                    inPlace=True,
-                                   scaleFactors=[1, 2, 10])
+                                   scaleFactors=[1, 2, 7])
     R.SetShrinkFactorsPerLevel([4, 2, 1])
     R.SetSmoothingSigmasPerLevel([4, 2, 1])
     
@@ -85,6 +86,14 @@ def run_registration(dtiFilename, t2Filename):
     cimg = sitk.Compose(simg1, simg2, simg1 // 2. + simg2 // 2.)
     sitk.WriteImage(cimg, 'Output/REGISTRATION-IMAGE.mha')
     
+    with open(os.path.join('Output', 'results.txt'),"a+") as f:
+        print("-------", file=f)
+        print(outTx, file=f)
+        print(f"Optimizer stop condition: {R.GetOptimizerStopConditionDescription()}", file=f)
+        print(f"Iteration: {R.GetOptimizerIteration()}", file=f)
+        print(f"Metric value: {R.GetMetricValue()}", file=f)
+        print(f"Time elapsed in seconds: {time.time() - start_time}", file=f)
+
     print(time.time() - start_time, "seconds")
     
     original_checkerboard = sitk.CheckerBoard(rescaled_img1, rescaled_img2, [4,4,4])
