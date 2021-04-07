@@ -100,11 +100,11 @@ for subdir, dirs, files in os.walk(sys.argv[1]):
         simg1 = sitk.Cast(rescaled_img1, sitk.sitkUInt8)
         simg2 = sitk.Cast(rescaled_img2, sitk.sitkUInt8)
         cimg = sitk.Compose(simg1, simg2, simg1 // 2. + simg2 // 2.)
-        sitk.WriteImage(cimg, os.path.join(OUTPUT_DIR, subdir_basename+"-RESULT-IMAGE.mha"))
+        sitk.WriteImage(cimg, os.path.join(OUTPUT_DIR, subdir_basename+"-RESULT-IMAGE.nii"))
         
         with open(os.path.join(OUTPUT_DIR, subdir_basename+'-results.txt'),"a+") as f:
             print("-------", file=f)
-            print(tx, file=f)
+            print(outTx, file=f)
             print(f"Optimizer stop condition: {R.GetOptimizerStopConditionDescription()}", file=f)
             print(f"Iteration: {R.GetOptimizerIteration()}", file=f)
             print(f"Metric value: {R.GetMetricValue()}", file=f)
@@ -113,5 +113,5 @@ for subdir, dirs, files in os.walk(sys.argv[1]):
         original_checkerboard = sitk.CheckerBoard(rescaled_img1, rescaled_img2, [4,4,4])
         transformed_checkerboard = sitk.CheckerBoard(simg1, simg2, (10,10,4))
         
-        sitk.WriteImage(original_checkerboard, os.path.join(OUTPUT_DIR, subdir_basename+"-CHECKERBOARD1.mha"))
-        sitk.WriteImage(transformed_checkerboard, os.path.join(OUTPUT_DIR, subdir_basename+"-CHECKERBOARD2.mha"))
+        sitk.WriteImage(original_checkerboard, os.path.join(OUTPUT_DIR, subdir_basename+"-CHECKERBOARD1.nii"))
+        sitk.WriteImage(transformed_checkerboard, os.path.join(OUTPUT_DIR, subdir_basename+"-CHECKERBOARD2.nii"))
