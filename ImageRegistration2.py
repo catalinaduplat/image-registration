@@ -84,7 +84,7 @@ def run_registration(dtiFilename, t2Filename):
     simg1 = sitk.Cast(rescaled_img1, sitk.sitkUInt8)
     simg2 = sitk.Cast(rescaled_img2, sitk.sitkUInt8)
     cimg = sitk.Compose(simg1, simg2, simg1 // 2. + simg2 // 2.)
-    sitk.WriteImage(cimg, 'Output/REGISTRATION-IMAGE.mha')
+    sitk.WriteImage(cimg, 'Output/REGISTRATION-IMAGE.nii')
     
     with open(os.path.join('Output', 'results.txt'),"a+") as f:
         print("-------", file=f)
@@ -99,6 +99,6 @@ def run_registration(dtiFilename, t2Filename):
     original_checkerboard = sitk.CheckerBoard(rescaled_img1, rescaled_img2, [4,4,4])
     transformed_checkerboard = sitk.CheckerBoard(simg1, simg2, (10,10,4))
     
-    sitk.WriteImage(original_checkerboard, 'Output/check1.mha')
-    sitk.WriteImage(transformed_checkerboard, 'Output/check2.mha')
+    sitk.WriteImage(original_checkerboard, 'Output/check1.nii')
+    sitk.WriteImage(transformed_checkerboard, 'Output/check2.nii')
     
