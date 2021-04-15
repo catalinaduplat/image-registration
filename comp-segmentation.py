@@ -12,7 +12,7 @@ import sys
 
 
 if len ( sys.argv ) < 3:
-    print( "usage: {0} <originalImage> <registrationImage>".format(sys.argv[0]))
+    print( "usage: {0} <originalSegmentedImage> <registrationSegmentedImage>".format(sys.argv[0]))
     sys.exit ( 1 )
 
 OUTPUT_DIR = 'Segmentation/Output'
