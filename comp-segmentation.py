@@ -8,9 +8,7 @@ Created on Sun Mar  7 15:35:43 2021
 
 import os
 import SimpleITK as sitk
-import time
 import sys
-import re
 
 
 if len ( sys.argv ) < 3:
