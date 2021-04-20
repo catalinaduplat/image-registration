@@ -28,7 +28,7 @@ seed_z = int(sys.argv[5])
 seed = (seed_x,seed_y,seed_z)
 
 pink= [255,105,180]
-green = [0,255,0]
+red = [128, 19, 73]
 
 def run_segmentation(image, res_image, multiplier, color, filename):
     seg = sitk.Image(image.GetSize(), sitk.sitkUInt8)
@@ -63,7 +63,7 @@ def run_segmentation(image, res_image, multiplier, color, filename):
 
 
 original_seg = run_segmentation(original_image, original_255, 1, pink, "fixed-img-segmented")
-registration_seg = run_segmentation(registration_image, registration_255, 1.5, green, "registration-img-segmented")
+registration_seg = run_segmentation(registration_image, registration_255, 1.5, red, "registration-img-segmented")
 
 checkerboard = sitk.CheckerBoard(original_seg, registration_seg, (20,20,20))     
 sitk.WriteImage(checkerboard, os.path.join(OUTPUT_DIR, "comp-segmentation.nii"))
